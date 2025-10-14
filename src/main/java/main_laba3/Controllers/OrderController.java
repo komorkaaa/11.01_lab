@@ -5,15 +5,20 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+import javafx.stage.Stage;
 import main_laba3.DAO.DbConnection;
 import main_laba3.Models.BuyersType;
 import main_laba3.Models.OrderType;
 import main_laba3.Models.ProductType;
+import main_laba3.Models.UsersType;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -31,6 +36,9 @@ public class OrderController {
 
   @FXML
   private Label message;
+
+  @FXML
+  private Button adminButton;
 
   @FXML
   private TableView<OrderType> orderTable;
@@ -51,7 +59,12 @@ public class OrderController {
     LoadProduct();
     LoadBuyer();
     LoadOrder();
+
+    adminButton.setVisible(UsersType.isAdmin());
+
+
     message.setText("");
+
   }
 
   @FXML
@@ -100,11 +113,20 @@ public class OrderController {
     idDate.setCellValueFactory(new PropertyValueFactory<OrderType, String>("dateOrder"));
     idPhoto.setCellValueFactory(p -> {
       String url = getClass().getResource("/main_laba3/image/") + p.getValue().getPhoto();
-      Image image = new Image(url, 50, 50, false, true, true);
+      Image image = new Image(url, 80, 80, false, true, true);
       return new ReadOnlyObjectWrapper<>(new ImageView(image));
     });
+  }
 
-
+  public void openAdminPanel() {
+    try {
+      Stage stage = (Stage) adminButton.getScene().getWindow();
+      Parent root = FXMLLoader.load(getClass().getResource("admin.fxml"));
+      stage.setTitle("Админ-панель");
+      stage.setScene(new Scene(root, 1200, 700));
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
 }

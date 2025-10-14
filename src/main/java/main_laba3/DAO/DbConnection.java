@@ -5,6 +5,7 @@ import javafx.collections.ObservableList;
 import main_laba3.Models.BuyersType;
 import main_laba3.Models.OrderType;
 import main_laba3.Models.ProductType;
+import main_laba3.Models.UsersType;
 
 import java.sql.*;
 public class DbConnection {
@@ -23,21 +24,21 @@ public class DbConnection {
         return dbConn;
     }
 
-    public int getUser(String loginu, String passwordu) throws SQLException, ClassNotFoundException {
-        String sql = "SELECT COUNT(*) as count FROM users WHERE login = ? AND password= ?";
-
-        PreparedStatement statement = getDbConnection().prepareStatement(sql);
-        statement.setString(1, loginu);
-        statement.setString(2, passwordu);
-
-        ResultSet res = statement.executeQuery();
-
-        int count = 0;
-        if (res.next()) {
-            count = res.getInt("count");
-        }
-        return count;
-    }
+//    public int getUser(String loginu, String passwordu) throws SQLException, ClassNotFoundException {
+//        String sql = "SELECT COUNT(*) as count FROM users WHERE login = ? AND password= ?";
+//
+//        PreparedStatement statement = getDbConnection().prepareStatement(sql);
+//        statement.setString(1, loginu);
+//        statement.setString(2, passwordu);
+//
+//        ResultSet res = statement.executeQuery();
+//
+//        int count = 0;
+//        if (res.next()) {
+//            count = res.getInt("count");
+//        }
+//        return count;
+//    }
 
 
     public void addUser(String fio, String loginu,String passwordu) throws SQLException, ClassNotFoundException {
@@ -108,6 +109,32 @@ public class DbConnection {
         ls.add(new OrderType(fio, name, dateOrder, photo));
       }
       return ls;
+  }
+
+  public UsersType findByUsername(String username) {
+    String sql = "SELECT * FROM users WHERE login = ?";
+    try (
+            PreparedStatement st = getDbConnection().prepareStatement(sql)){
+      st.setString(1, username);
+      ResultSet rs = st.executeQuery();
+      if (rs.next()) {
+        return new UsersType(
+                rs.getInt("idusers"),
+                rs.getString("fio"),
+                rs.getString("login"),
+                rs.getString("password"),
+                rs.getString("role_name")
+        );
+      }
+    } catch (SQLException | ClassNotFoundException e) { e.printStackTrace(); }
+    return null;
+  }
+
+  public UsersType authenticate(String username, String Password) {
+    UsersType u = findByUsername(username);
+    if (u == null) return null;
+    if (Password.equals(u.getPassword()));
+    return u;
   }
 
 

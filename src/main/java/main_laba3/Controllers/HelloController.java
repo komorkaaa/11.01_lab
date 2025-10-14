@@ -8,6 +8,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+
+import main_laba3.Models.UsersType;
 import main_laba3.DAO.DbConnection;
 import main_laba3.HelloApplication;
 
@@ -51,10 +53,20 @@ public class HelloController {
         }
 
         try {
-            int a=db.getUser(idLogin.getText(),idPassword.getText());
-            if (a>0) {
-              openOrderWindow();}
-            else {welcomeText.setText("Такого пользователя нет");};
+//            int a = db.getUser(idLogin.getText(),idPassword.getText());
+//            if (a>0) {
+//              openOrderWindow();}
+//            else {welcomeText.setText("Такого пользователя нет");};
+
+          DbConnection db = new DbConnection();
+          UsersType user = db.authenticate(login, pass);
+
+          if (user != null) {
+            UsersType.setCurrentUser(user);
+            openOrderWindow();
+          } else {
+            welcomeText.setText("Неверный логин/пароль");
+          }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } catch (ClassNotFoundException e) {
@@ -81,4 +93,5 @@ public class HelloController {
       stage.setScene(scene);
       stage.show();
     }
+
 }

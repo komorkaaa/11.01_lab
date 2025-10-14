@@ -3,8 +3,18 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
 <VBox prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main_laba3.Controllers.OrderController">
+
+    <HBox alignment="TOP_RIGHT">
+        <Button fx:id="adminButton" alignment="CENTER" onAction="#openAdminPanel" text="Админ-панель">
+             <HBox.margin>
+                <Insets right="10.0" top="10.0" />
+             </HBox.margin>
+        </Button>
+    </HBox>
+
      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20">
         <children>
           <ComboBox fx:id="buyerName" prefWidth="150.0" promptText="Выберите покупателя" />
@@ -17,7 +27,9 @@
 
     <HBox alignment="CENTER">
         <Label fx:id="message">
-            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+             <HBox.margin>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+             </HBox.margin>
         </Label>
     </HBox>
 
@@ -25,12 +37,23 @@
         <Button fx:id="orderButton" onAction="#Zakaz" text="Оформить заказ" />
     </HBox>
 
+    <HBox>
+        <Label alignment="CENTER_LEFT" text="История заказов">
+             <HBox.margin>
+                <Insets left="20.0" />
+             </HBox.margin>
+             <font>
+                <Font size="16.0" />
+             </font>
+        </Label>
+    </HBox>
+
     <TableView fx:id="orderTable">
         <columns>
-            <TableColumn fx:id="idFio" text="ФИО"/>
-            <TableColumn fx:id="idProd" text="Название"/>
-            <TableColumn fx:id="idDate" text = "Дата заказа"/>
-            <TableColumn fx:id="idPhoto" text = "Фото"/>
+            <TableColumn fx:id="idFio" text="ФИО" />
+            <TableColumn fx:id="idProd" text="Название" />
+            <TableColumn fx:id="idDate" text="Дата заказа" />
+            <TableColumn fx:id="idPhoto" prefWidth="100" text="Фото" />
         </columns>
 
       <VBox.margin>
