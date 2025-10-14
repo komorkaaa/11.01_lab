@@ -75,8 +75,9 @@ public class HelloController {
     public void openOrderWindow() throws SQLException, ClassNotFoundException, IOException {
       Stage stage = (Stage) idLogin.getScene().getWindow();
       FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("order.fxml"));
-      Scene scene = new Scene(fxmlLoader.load(), 350, 280);
+      Scene scene = new Scene(fxmlLoader.load(), 600, 420);
       stage.setTitle("Оформление заказа!");
+      stage.centerOnScreen();
       stage.setScene(scene);
       stage.show();
     }

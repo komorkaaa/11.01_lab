@@ -1,9 +1,15 @@
 package main_laba3.Controllers;
 
+import javafx.beans.property.ReadOnlyListProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+
 import main_laba3.DAO.DbConnection;
 import main_laba3.Models.BuyersType;
 import main_laba3.Models.OrderType;
@@ -31,6 +37,7 @@ public class OrderController {
   @FXML private TableColumn<OrderType, String> idFio;
   @FXML private TableColumn<OrderType, String> idProd;
   @FXML private TableColumn<OrderType, String> idDate;
+  @FXML private TableColumn<OrderType, ImageView> idPhoto;
 
   public ArrayList<Integer> prod;
 
@@ -91,6 +98,11 @@ public class OrderController {
     idFio.setCellValueFactory(new PropertyValueFactory<OrderType, String>("fio"));
     idProd.setCellValueFactory(new PropertyValueFactory<OrderType, String>("name"));
     idDate.setCellValueFactory(new PropertyValueFactory<OrderType, String>("dateOrder"));
+    idPhoto.setCellValueFactory(p -> {
+      String url = getClass().getResource("/main_laba3/image/") + p.getValue().getPhoto();
+      Image image = new Image(url, 50, 50, false, true, true);
+      return new ReadOnlyObjectWrapper<>(new ImageView(image));
+    });
 
 
   }

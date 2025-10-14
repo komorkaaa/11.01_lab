@@ -97,16 +97,18 @@ public class DbConnection {
 
   public ObservableList<OrderType> getOrder() throws SQLException, ClassNotFoundException {
       ObservableList<OrderType> ls = FXCollections.observableArrayList();
-      String sql = "select title, fio, date_of_byuer from products p,  buyers b, product_has_buyers phb where p.idproducts = phb.product_idproducts and b.idbuyer = phb.buyer_idbuyers;";
+      String sql = "select title, fio, date_of_byuer, photo from products p,  buyers b, product_has_buyers phb where p.idproducts = phb.product_idproducts and b.idbuyer = phb.buyer_idbuyers;";
       Statement statement = getDbConnection().createStatement();
       ResultSet res = statement.executeQuery(sql);
       while (res.next()) {
         String fio = res.getString("fio");
         String name = res.getString("title");
         String dateOrder = res.getString("date_of_byuer");
-        ls.add(new OrderType(fio, name, dateOrder));
+        String photo = res.getString("photo");
+        ls.add(new OrderType(fio, name, dateOrder, photo));
       }
       return ls;
   }
+
 
 }

@@ -30,6 +30,7 @@
             <TableColumn fx:id="idFio" text="ФИО"/>
             <TableColumn fx:id="idProd" text="Название"/>
             <TableColumn fx:id="idDate" text = "Дата заказа"/>
+            <TableColumn fx:id="idPhoto" text = "Фото"/>
         </columns>
 
       <VBox.margin>
