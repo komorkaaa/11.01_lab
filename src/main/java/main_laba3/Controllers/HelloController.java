@@ -53,10 +53,6 @@ public class HelloController {
         }
 
         try {
-//            int a = db.getUser(idLogin.getText(),idPassword.getText());
-//            if (a>0) {
-//              openOrderWindow();}
-//            else {welcomeText.setText("Такого пользователя нет");};
 
           DbConnection db = new DbConnection();
           UsersType user = db.authenticate(login, pass);

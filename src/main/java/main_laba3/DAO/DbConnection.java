@@ -137,5 +137,14 @@ public class DbConnection {
     return u;
   }
 
+  public void addNewProduct(String name_product, String imageName) throws SQLException, ClassNotFoundException {
+    String sql = "insert into products (title, photo) values (?, ?)";
+
+    PreparedStatement prstm = getDbConnection().prepareStatement(sql);
+    prstm.setString(1, name_product);
+    prstm.setString(2, imageName);
+    prstm.executeUpdate();
+  }
+
 
 }

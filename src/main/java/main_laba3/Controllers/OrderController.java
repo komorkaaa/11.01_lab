@@ -15,11 +15,13 @@ import javafx.scene.image.ImageView;
 
 import javafx.stage.Stage;
 import main_laba3.DAO.DbConnection;
+import main_laba3.HelloApplication;
 import main_laba3.Models.BuyersType;
 import main_laba3.Models.OrderType;
 import main_laba3.Models.ProductType;
 import main_laba3.Models.UsersType;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -118,15 +120,14 @@ public class OrderController {
     });
   }
 
-  public void openAdminPanel() {
-    try {
-      Stage stage = (Stage) adminButton.getScene().getWindow();
-      Parent root = FXMLLoader.load(getClass().getResource("admin.fxml"));
-      stage.setTitle("Админ-панель");
-      stage.setScene(new Scene(root, 1200, 700));
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+  public void openAdminPanel() throws IOException {
+    Stage stage = (Stage) buyerName.getScene().getWindow();
+    FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("admin.fxml"));
+    Scene scene = new Scene(fxmlLoader.load(), 600, 420);
+    stage.setTitle("Оформление заказа!");
+    stage.centerOnScreen();
+    stage.setScene(scene);
+    stage.show();
   }
 
 }

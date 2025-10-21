@@ -7,6 +7,8 @@ module main.laba3 {
 //  requires main.laba3;
   requires javafx.base;
 //  requires main.laba3;
+//  requires main.laba3;
+//  requires main.laba3;
 
 
   opens main_laba3 to javafx.fxml;
