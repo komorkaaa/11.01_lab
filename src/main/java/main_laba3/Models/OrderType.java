@@ -6,12 +6,18 @@ public class OrderType {
   private String name;
   private String dateOrder;
   private String photo;
+  private int id;
 
-  public OrderType(String fio, String name, String dateOrder, String photo) {
+  private ProductType product;
+  public ProductType getProduct() { return product; }
+  public void setProduct(ProductType product) { this.product = product; }
+
+  public OrderType(String fio, String name, String dateOrder, String photo, int id) {
     this.fio = fio;
     this.name = name;
     this.dateOrder = dateOrder;
     this.photo = photo;
+    this.id = id;
   }
 
   public String getFio() {
@@ -25,5 +31,24 @@ public class OrderType {
   }
   public String getPhoto() {
     return photo;
+  }
+  public int getId() {
+    return id;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+  public void setDateOrder(String dateOrder) {
+    this.dateOrder = dateOrder;
+  }
+  public void setPhoto(String photo) {
+    this.photo = photo;
+  }
+  public void setFio(String fio) {
+    this.fio = fio;
+  }
+  public void setId(int id) {
+    this.id = id;
   }
 }

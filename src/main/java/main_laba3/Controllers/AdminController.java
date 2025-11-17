@@ -1,17 +1,24 @@
 package main_laba3.Controllers;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import main_laba3.DAO.DbConnection;
 import main_laba3.HelloApplication;
+import main_laba3.Models.OrderType;
+import main_laba3.Models.ProductType;
+import main_laba3.Models.UsersType;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,9 +49,98 @@ public class AdminController {
   @FXML
   private Label selectedImageName;
 
+  @FXML
+  private TableView<OrderType> orderTable;
+  @FXML private TableColumn<OrderType, String> idFio;
+  @FXML private TableColumn<OrderType, String> idProd;
+  @FXML private TableColumn<OrderType, String> idDate;
+  @FXML private TableColumn<OrderType, ImageView> idPhoto;
+
   private final DbConnection db = new DbConnection();
 
   private File selectedImageFile;
+
+  @FXML
+  void initialize() throws SQLException, ClassNotFoundException {
+    LoadOrder();
+    message.setText("");
+  }
+
+  @FXML
+  void LoadOrder() throws SQLException, ClassNotFoundException {
+    ObservableList<OrderType> order = db.getOrder();
+    orderTable.getItems().clear();
+    orderTable.getItems().addAll(order);
+
+    idFio.setCellValueFactory(new PropertyValueFactory<OrderType, String>("fio"));
+    idProd.setCellValueFactory(new PropertyValueFactory<OrderType, String>("name"));
+    idDate.setCellValueFactory(new PropertyValueFactory<OrderType, String>("dateOrder"));
+    idPhoto.setCellValueFactory(p -> {
+      String url = getClass().getResource("/main_laba3/image/") + p.getValue().getPhoto();
+      Image image = new Image(url, 80, 80, false, true, true);
+      return new ReadOnlyObjectWrapper<>(new ImageView(image));
+    });
+
+    ContextMenu rowMenu = new ContextMenu();
+    MenuItem editItem = new MenuItem("Редактировать продукт");
+    MenuItem delItem = new MenuItem("Удалит продукт");
+    rowMenu.getItems().add(editItem);
+    rowMenu.getItems().add(delItem);
+
+    orderTable.setRowFactory(tv -> {
+      TableRow<OrderType> row = new TableRow<>();
+      row.contextMenuProperty().bind(
+              Bindings.when(row.emptyProperty())
+                      .then((ContextMenu) null)
+                      .otherwise(rowMenu)
+      );
+      return row;
+    });
+
+    editItem.setOnAction(e -> {
+      OrderType selectedOrder = orderTable.getSelectionModel().getSelectedItem();
+      if (selectedOrder != null) {
+        try {
+
+          int productId = db.getProductIdByOrder(selectedOrder.getId());
+          ProductType product = db.getProductById(productId);
+
+          FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("edit.fxml"));
+          Parent root = fxmlLoader.load();
+
+          main_laba3.Controllers.EditController controller = fxmlLoader.getController();
+          controller.initData(product);
+
+          Stage stage = new Stage();
+          stage.initModality(Modality.APPLICATION_MODAL);
+          stage.setTitle("Редактирование продукта");
+          stage.setScene(new Scene(root));
+          stage.showAndWait();
+
+          LoadOrder();
+        } catch (IOException | SQLException | ClassNotFoundException ex) {
+          ex.printStackTrace();
+        }
+      }
+    });
+    delItem.setOnAction(e -> {
+      OrderType selectedOrder = orderTable.getSelectionModel().getSelectedItem();
+      if (selectedOrder != null) {
+        try {
+
+          int productId = db.getProductIdByOrder(selectedOrder.getId());
+          ProductType product = db.getProductById(productId);
+
+          db.deleteItem(productId);
+
+
+
+        } catch (SQLException | ClassNotFoundException ex) {
+          ex.printStackTrace();
+        }
+      }
+    });
+  }
 
   @FXML
   private void addNewValue() throws SQLException, ClassNotFoundException, IOException {

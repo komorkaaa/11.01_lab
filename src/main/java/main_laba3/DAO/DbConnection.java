@@ -63,7 +63,7 @@ public class DbConnection {
     public ObservableList<ProductType> getProduct() throws SQLException, ClassNotFoundException {
       ObservableList<ProductType> ls = FXCollections.observableArrayList();
 
-      String sql = "select idproducts, title from products";
+      String sql = "select idproducts, title, photo from products";
 
       Statement statement = getDbConnection().createStatement();
 
@@ -72,8 +72,9 @@ public class DbConnection {
       while (res.next()) {
         Integer idproducts = res.getInt("idproducts");
         String title = res.getString("title");
+        String photo = res.getString("photo");
 
-        ls.add(new ProductType(idproducts, title));
+        ls.add(new ProductType(idproducts, title, photo));
       }
       return ls;
     }
@@ -98,7 +99,7 @@ public class DbConnection {
 
   public ObservableList<OrderType> getOrder() throws SQLException, ClassNotFoundException {
       ObservableList<OrderType> ls = FXCollections.observableArrayList();
-      String sql = "select title, fio, date_of_byuer, photo from products p,  buyers b, product_has_buyers phb where p.idproducts = phb.product_idproducts and b.idbuyer = phb.buyer_idbuyers;";
+      String sql = "select title, fio, date_of_byuer, photo, id_order  from products p,  buyers b, product_has_buyers phb where p.idproducts = phb.product_idproducts and b.idbuyer = phb.buyer_idbuyers;";
       Statement statement = getDbConnection().createStatement();
       ResultSet res = statement.executeQuery(sql);
       while (res.next()) {
@@ -106,7 +107,8 @@ public class DbConnection {
         String name = res.getString("title");
         String dateOrder = res.getString("date_of_byuer");
         String photo = res.getString("photo");
-        ls.add(new OrderType(fio, name, dateOrder, photo));
+        int idorder = res.getInt("id_order");
+        ls.add(new OrderType(fio, name, dateOrder, photo, idorder));
       }
       return ls;
   }
@@ -145,6 +147,49 @@ public class DbConnection {
     prstm.setString(2, imageName);
     prstm.executeUpdate();
   }
+
+  public void updateProduct(int productId, String newTitle, String newPhoto) throws SQLException, ClassNotFoundException {
+    String sql = "UPDATE products SET title = ?, photo = ? WHERE idproducts = ?";
+    PreparedStatement prstm = getDbConnection().prepareStatement(sql);
+    prstm.setString(1, newTitle);
+    prstm.setString(2, newPhoto);
+    prstm.setInt(3, productId);
+    prstm.executeUpdate();
+    prstm.close();
+  }
+
+  public ProductType getProductById(int id) throws SQLException, ClassNotFoundException {
+    String sql = "SELECT idproducts, title, photo FROM products WHERE idproducts = ?";
+    PreparedStatement prstm = getDbConnection().prepareStatement(sql);
+    prstm.setInt(1, id);
+    ResultSet res = prstm.executeQuery();
+    if (res.next()) {
+      return new ProductType(
+              res.getInt("idproducts"),
+              res.getString("title"),
+              res.getString("photo")
+      );
+    }
+    return null;
+  }
+
+  public int getProductIdByOrder(int orderId) throws SQLException, ClassNotFoundException {
+    String sql = "SELECT product_idproducts FROM product_has_buyers WHERE id_order = ?";
+    PreparedStatement stmt = getDbConnection().prepareStatement(sql);
+    stmt.setInt(1, orderId);
+    ResultSet res = stmt.executeQuery();
+    if (res.next()) {
+      return res.getInt("product_idproducts");
+    }
+    return -1; // если не найден
+  }
+
+  public int deleteItem(int id) throws SQLException, ClassNotFoundException {
+      String sql = "DELETE FROM products WHERE idproducts = ?";
+      PreparedStatement stmt = getDbConnection().prepareStatement(sql);
+      stmt.setInt(1, id);
+      return stmt.executeUpdate();
+    }
 
 
 }

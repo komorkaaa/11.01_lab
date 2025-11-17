@@ -1,5 +1,7 @@
 package main_laba3.Controllers;
 
+import javafx.beans.binding.Binding;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyListProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleStringProperty;
@@ -13,6 +15,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import main_laba3.DAO.DbConnection;
 import main_laba3.HelloApplication;
@@ -24,6 +27,8 @@ import main_laba3.Models.UsersType;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class OrderController {
 
@@ -52,6 +57,10 @@ public class OrderController {
   public ArrayList<Integer> prod;
 
   public ArrayList <Integer> buyer;
+
+  String name;
+  String photo;
+  int id;
 
   DbConnection db = null;
 
@@ -123,7 +132,7 @@ public class OrderController {
   public void openAdminPanel() throws IOException {
     Stage stage = (Stage) buyerName.getScene().getWindow();
     FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("admin.fxml"));
-    Scene scene = new Scene(fxmlLoader.load(), 600, 420);
+    Scene scene = new Scene(fxmlLoader.load(), 600, 600);
     stage.setTitle("Оформление заказа!");
     stage.centerOnScreen();
     stage.setScene(scene);
