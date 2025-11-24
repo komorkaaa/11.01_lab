@@ -1,11 +1,8 @@
-package main_laba3.DAO;
+package main_laba3.db;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import main_laba3.Models.BuyersType;
-import main_laba3.Models.OrderType;
-import main_laba3.Models.ProductType;
-import main_laba3.Models.UsersType;
+import main_laba3.Models.*;
 
 import java.sql.*;
 public class DbConnection {
@@ -125,18 +122,134 @@ public class DbConnection {
                 rs.getString("fio"),
                 rs.getString("login"),
                 rs.getString("password"),
-                rs.getString("role_name")
+                rs.getString("role_name"),
+                rs.getBoolean("is_blocked"),
+                rs.getInt("failed_attempts")
         );
       }
     } catch (SQLException | ClassNotFoundException e) { e.printStackTrace(); }
     return null;
   }
 
-  public UsersType authenticate(String username, String Password) {
+  public void addLoginHistory(int userId, String status) {
+    String sql = "INSERT INTO login_history (user_id, status) VALUES (?, ?)";
+    try (PreparedStatement st = getDbConnection().prepareStatement(sql)) {
+      st.setInt(1, userId);
+      st.setString(2, status);
+      st.executeUpdate();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  public void increaseFailedAttempts(int userId) {
+    String sql = "UPDATE users SET failed_attempts = failed_attempts + 1 WHERE idusers = ?";
+    try (PreparedStatement st = getDbConnection().prepareStatement(sql)) {
+      st.setInt(1, userId);
+      st.executeUpdate();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  public void resetFailedAttempts(int userId) {
+    String sql = "UPDATE users SET failed_attempts = 0 WHERE idusers = ?";
+    try (PreparedStatement st = getDbConnection().prepareStatement(sql)) {
+      st.setInt(1, userId);
+      st.executeUpdate();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  public void blockUser(int userId) {
+    String sql = "UPDATE users SET is_blocked = TRUE WHERE idusers = ?";
+    try (PreparedStatement st = getDbConnection().prepareStatement(sql)) {
+      st.setInt(1, userId);
+      st.executeUpdate();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  public void unblockUser(int userId) {
+    String sql = "UPDATE users SET is_blocked = FALSE, failed_attempts = 0 WHERE idusers = ?";
+    try (PreparedStatement st = getDbConnection().prepareStatement(sql)) {
+      st.setInt(1, userId);
+      st.executeUpdate();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  public ObservableList<LoginHistoryType> getLoginHistory() {
+    ObservableList<LoginHistoryType> history = FXCollections.observableArrayList();
+
+    String query = "SELECT lh.id, u.login, lh.login_time, lh.status FROM login_history lh join users u on u.idusers = lh.user_id ORDER BY login_time DESC";
+
+    try (PreparedStatement stmt = getDbConnection().prepareStatement(query);
+         ResultSet rs = stmt.executeQuery()) {
+
+      while (rs.next()) {
+        history.add(new LoginHistoryType(
+                rs.getInt("id"),
+                rs.getString("login"),
+                rs.getTimestamp("login_time"),
+                rs.getString("status")
+        ));
+      }
+
+    } catch (SQLException | ClassNotFoundException e) {
+      e.printStackTrace();
+    }
+
+    return history;
+  }
+
+  public int getFailCount(int userId) {
+    String sql = "SELECT failed_attempts FROM users WHERE idusers = ?";
+    int fails = 0;
+
+    try (Connection conn = getDbConnection();
+         PreparedStatement st = conn.prepareStatement(sql)) {
+
+      st.setInt(1, userId);
+      ResultSet rs = st.executeQuery();
+
+      if (rs.next()) {
+        fails = rs.getInt("failed_attempts");
+      }
+
+    } catch (SQLException | ClassNotFoundException e) {
+      e.printStackTrace();
+    }
+
+    return fails;
+  }
+
+  public UsersType authenticate(String username, String password) {
     UsersType u = findByUsername(username);
     if (u == null) return null;
-    if (Password.equals(u.getPassword()));
-    return u;
+
+    if (u.isBlocked()) {
+      return u;
+    }
+
+    if (password.equals(u.getPassword())) {
+      resetFailedAttempts(u.getIdusers());
+      addLoginHistory(u.getIdusers(), "SUCCESS");
+      return u;
+    } else {
+      increaseFailedAttempts(u.getIdusers());
+      addLoginHistory(u.getIdusers(), "FAILED");
+
+      int fails = getFailCount(u.getIdusers());
+      if (fails >= 3) {
+        blockUser(u.getIdusers());
+      }
+
+      return null;
+    }
   }
 
   public void addNewProduct(String name_product, String imageName) throws SQLException, ClassNotFoundException {

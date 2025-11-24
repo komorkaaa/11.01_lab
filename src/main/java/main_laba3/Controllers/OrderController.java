@@ -1,23 +1,17 @@
 package main_laba3.Controllers;
 
-import javafx.beans.binding.Binding;
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.ReadOnlyListProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import main_laba3.DAO.DbConnection;
+import main_laba3.db.DbConnection;
 import main_laba3.HelloApplication;
 import main_laba3.Models.BuyersType;
 import main_laba3.Models.OrderType;
@@ -27,8 +21,6 @@ import main_laba3.Models.UsersType;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class OrderController {
 

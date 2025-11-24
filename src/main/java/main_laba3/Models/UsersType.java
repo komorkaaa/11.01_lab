@@ -6,6 +6,8 @@ public class UsersType {
   private String login;
   private String password;
   private String role;
+  private boolean isBlocked;
+  private int failedAttempts;
 
   private static UsersType currentUser;
 
@@ -17,14 +19,19 @@ public class UsersType {
     return currentUser != null && "admin".equalsIgnoreCase(currentUser.getRole());
   }
 
-  public UsersType(int idusers, String fio, String login, String password, String role) {
+  public UsersType(int idusers, String fio, String login, String password, String role, boolean isBlocked, int failedAttempts) {
     this.idusers = idusers;
     this.fio = fio;
     this.login = login;
     this.password = password;
     this.role = role;
+    this.isBlocked = isBlocked;
+    this.failedAttempts = failedAttempts;
   }
 
+
+  public boolean isBlocked() { return isBlocked; }
+  public int getFailedAttempts() { return failedAttempts; }
   public int getIdusers() {
     return idusers;
   }

@@ -13,8 +13,8 @@ module main.laba3 {
     exports main_laba3;
   exports main_laba3.Controllers;
   opens main_laba3.Controllers to javafx.fxml;
-  exports main_laba3.DAO;
-  opens main_laba3.DAO to javafx.fxml;
+  exports main_laba3.db;
+  opens main_laba3.db to javafx.fxml;
   exports main_laba3.Models;
   opens main_laba3.Models to javafx.fxml;
 }

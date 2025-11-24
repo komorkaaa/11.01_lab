@@ -10,7 +10,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import main_laba3.Models.UsersType;
-import main_laba3.DAO.DbConnection;
+import main_laba3.db.DbConnection;
 import main_laba3.HelloApplication;
 
 import java.io.IOException;
@@ -18,76 +18,94 @@ import java.sql.SQLException;
 
 public class HelloController {
 
-    @FXML
-    private TextField idLogin;
+  @FXML
+  private TextField idLogin;
 
-    @FXML
-    private Button idButtonLogin;
+  @FXML
+  private Button idButtonLogin;
 
-    @FXML
-    private PasswordField idPassword;
+  @FXML
+  private PasswordField idPassword;
 
-    @FXML
-    private Button idButtonRegistr;
+  @FXML
+  private Button idButtonRegistr;
 
-    @FXML
-    private Label welcomeText;
-    DbConnection db = null;
+  @FXML
+  private Label welcomeText;
+  DbConnection db = null;
 
-    @FXML
-    void initialize() throws SQLException, ClassNotFoundException {
+  @FXML
+  void initialize() throws SQLException, ClassNotFoundException {
 
-        db = new DbConnection();
-        welcomeText.setText("");
+    db = new DbConnection();
+    welcomeText.setText("");
 
+  }
+
+  @FXML
+  protected void onLoginButtonClick() throws IOException {
+    String login = idLogin.getText();
+    String pass = idPassword.getText();
+
+    if (login.isEmpty() || pass.isEmpty()) {
+      welcomeText.setText("Есть пустые поля!");
+      return;
     }
 
-    @FXML
-    protected void onLoginButtonClick() throws  IOException {
-        String login = idLogin.getText();
-        String pass = idPassword.getText();
+    try {
+      DbConnection db = new DbConnection();
+      UsersType user = db.findByUsername(login);
 
-        if (login.isEmpty() || pass.isEmpty()) {
-            welcomeText.setText("Есть пустые поля!");
-            return;
+      if (user == null) {
+        welcomeText.setText("Пользователь не найден");
+        return;
+      }
+
+      if (user.isBlocked()) {
+        welcomeText.setText("Аккаунт заблокирован");
+        return;
+      }
+
+      UsersType authUser = db.authenticate(login, pass);
+
+      if (authUser != null && !authUser.isBlocked()) {
+        UsersType.setCurrentUser(authUser);
+        openOrderWindow();
+
+      } else {
+        user = db.findByUsername(login);
+        if (user != null && user.isBlocked()) {
+          welcomeText.setText("Аккаунт заблокирован после 3 неверных попыток!");
+        } else {
+          welcomeText.setText("Неверный логин/пароль");
         }
+      }
 
-        try {
-
-          DbConnection db = new DbConnection();
-          UsersType user = db.authenticate(login, pass);
-
-          if (user != null) {
-            UsersType.setCurrentUser(user);
-            openOrderWindow();
-          } else {
-            welcomeText.setText("Неверный логин/пароль");
-          }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+    } catch (SQLException | ClassNotFoundException e) {
+      e.printStackTrace();
+      welcomeText.setText("Ошибка входа");
     }
+  }
 
-    @FXML
-    public void onRegistrButtonClick() throws IOException {
-        Stage stage = (Stage) idLogin.getScene().getWindow();
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("reg.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 320, 240);
-        stage.setTitle("Регистрация!");
-        stage.setScene(scene);
-        stage.show();
-    }
 
-    public void openOrderWindow() throws SQLException, ClassNotFoundException, IOException {
-      Stage stage = (Stage) idLogin.getScene().getWindow();
-      FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("order.fxml"));
-      Scene scene = new Scene(fxmlLoader.load(), 600, 420);
-      stage.setTitle("Оформление заказа!");
-      stage.centerOnScreen();
-      stage.setScene(scene);
-      stage.show();
-    }
+  @FXML
+  public void onRegistrButtonClick() throws IOException {
+    Stage stage = (Stage) idLogin.getScene().getWindow();
+    FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("reg.fxml"));
+    Scene scene = new Scene(fxmlLoader.load(), 320, 240);
+    stage.setTitle("Регистрация!");
+    stage.setScene(scene);
+    stage.show();
+  }
+
+  public void openOrderWindow() throws SQLException, ClassNotFoundException, IOException {
+    Stage stage = (Stage) idLogin.getScene().getWindow();
+    FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("order.fxml"));
+    Scene scene = new Scene(fxmlLoader.load(), 600, 420);
+    stage.setTitle("Оформление заказа!");
+    stage.centerOnScreen();
+    stage.setScene(scene);
+    stage.show();
+  }
 
 }

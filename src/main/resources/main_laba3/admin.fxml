@@ -35,9 +35,7 @@
 
     <TableView fx:id="orderTable" >
         <columns>
-            <TableColumn fx:id="idFio" text="ФИО" />
             <TableColumn fx:id="idProd" text="Название" />
-            <TableColumn fx:id="idDate" text="Дата заказа" />
             <TableColumn fx:id="idPhoto" prefWidth="100" text="Фото" />
         </columns>
 
@@ -53,6 +51,10 @@
 
         <HBox alignment="CENTER">
             <Button fx:id="backToOrder" onAction="#onBackToOrder" text="Вернуться обратно" />
+        </HBox>
+
+        <HBox alignment="CENTER">
+            <Button fx:id="toHistory" onAction="#onToHistory" text="Посмотреть историю входа" />
         </HBox>
 
         <VBox.margin>

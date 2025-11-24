@@ -6,7 +6,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import main_laba3.DAO.DbConnection;
+import main_laba3.db.DbConnection;
 import main_laba3.Models.ProductType;
 
 import java.io.File;

@@ -14,11 +14,10 @@ import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import main_laba3.DAO.DbConnection;
+import main_laba3.db.DbConnection;
 import main_laba3.HelloApplication;
 import main_laba3.Models.OrderType;
 import main_laba3.Models.ProductType;
-import main_laba3.Models.UsersType;
 
 import java.io.File;
 import java.io.IOException;
@@ -72,9 +71,7 @@ public class AdminController {
     orderTable.getItems().clear();
     orderTable.getItems().addAll(order);
 
-    idFio.setCellValueFactory(new PropertyValueFactory<OrderType, String>("fio"));
     idProd.setCellValueFactory(new PropertyValueFactory<OrderType, String>("name"));
-    idDate.setCellValueFactory(new PropertyValueFactory<OrderType, String>("dateOrder"));
     idPhoto.setCellValueFactory(p -> {
       String url = getClass().getResource("/main_laba3/image/") + p.getValue().getPhoto();
       Image image = new Image(url, 80, 80, false, true, true);
@@ -196,6 +193,16 @@ public class AdminController {
     FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("order.fxml"));
     Scene scene = new Scene(fxmlLoader.load(), 600, 420);
     stage.setTitle("Оформление заказа!");
+    stage.centerOnScreen();
+    stage.setScene(scene);
+    stage.show();
+  }
+
+  public void onToHistory() throws SQLException, ClassNotFoundException, IOException {
+    Stage stage = (Stage) orderTable.getScene().getWindow();
+    FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("login_history.fxml"));
+    Scene scene = new Scene(fxmlLoader.load(), 600, 600);
+    stage.setTitle("История");
     stage.centerOnScreen();
     stage.setScene(scene);
     stage.show();

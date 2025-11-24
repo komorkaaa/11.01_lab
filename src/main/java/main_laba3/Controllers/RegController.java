@@ -7,7 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
-import main_laba3.DAO.DbConnection;
+import main_laba3.db.DbConnection;
 import main_laba3.HelloApplication;
 
 import java.io.IOException;
